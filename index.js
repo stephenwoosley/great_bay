@@ -10,6 +10,7 @@ const connection = mysql.createConnection({
 });
 
 const app = {
+  currentItems: [],
   runInquiry: () => {
     inquirer
       .prompt({
@@ -28,19 +29,48 @@ const app = {
     console.log("postItem function to run here");
   },
   bidItem: () => {
-    console.log("bidItem function to run here");
+    app.inquirerBid();
   },
   inquirerBid: () => {
     inquirer
-      .prompt({
-
+      .prompt([
+        {
+          name: "bidChoice",
+          type: "rawlist",
+          message: "Which item would you like to bid on?",
+          choices: app.currentItems
+        },
+        {
+          name: "bidAmount",
+          type: "input",
+          message: "How much would you like to bid?"
+        }
+      ])
+      .then((answer) => {
+        //app.placeBid(answer.bidChoice);
       })
+  },
+  placeBid: (item) => {
+    connection.query("SELECT * FROM products WHERE item_name")
+  },
+  fillCurrentItems: () => {
+    connection.query("SELECT * FROM products", (err, results) => {
+      if (err) throw err;
+      for (var i = 0; i < results.length; i++) {
+        app.currentItems.push(results[i].item_name);
+      }
+      //console.log(`currentItems is ${app.currentItems}`);
+    })
+    // add name of item to currentItems array
   }
 }
+
+let currentItems = [];
 
 connection.connect((err) => {
   if(err) throw err;
   console.log("connected as id " + connection.threadId + "\n");
+  app.fillCurrentItems();
   app.runInquiry();
 })
 
