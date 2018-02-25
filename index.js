@@ -29,6 +29,12 @@ const app = {
   },
   bidItem: () => {
     console.log("bidItem function to run here");
+  },
+  inquirerBid: () => {
+    inquirer
+      .prompt({
+
+      })
   }
 }
 
